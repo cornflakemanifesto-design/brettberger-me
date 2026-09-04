@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brett Berger</title>
+<meta name="description" content="Brett Berger — projects, writing, and links.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <main class="card">
+    <div class="avatar" aria-hidden="true">BB</div>
+    <h1>Brett Berger</h1>
+    <p class="tagline">My brain hurts. Now it's your problem, too.</p>
+
+    <ul class="links">
+      <li>
+        <a href="https://www.unhingedlistings.com" class="link-item">
+          <span class="link-title">Unhinged Listings</span>
+          <span class="link-sub">unhingedlistings.com</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://www.hagglebot.app" class="link-item">
+          <span class="link-title">Hagglebot</span>
+          <span class="link-sub">hagglebot.app</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://www.youtube.com/@behind_the_moat" class="link-item">
+          <span class="link-title">Behind the Moat</span>
+          <span class="link-sub">YouTube channel</span>
+        </a>
+      </li>
+      <li>
+        <a href="writing.html" class="link-item">
+          <span class="link-title">Writing</span>
+          <span class="link-sub">A Greyhound bus, narrated as wildlife documentary</span>
+        </a>
+      </li>
+      <li>
+        <a href="mailto:brett@brettberger.me" class="link-item">
+          <span class="link-title">Email</span>
+          <span class="link-sub">brett@brettberger.me</span>
+        </a>
+      </li>
+    </ul>
+
+    <footer>
+      <span id="year"></span> Brett Berger
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
