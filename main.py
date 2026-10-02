@@ -7,7 +7,10 @@ from pathlib import Path
 import json, os, secrets, hashlib, hmac, time
 
 APP_DIR = Path(__file__).parent
-CONTENT_FILE = APP_DIR / "content.json"
+# On Render, write persistent data to the mounted disk at /data.
+# Locally, fall back to APP_DIR so dev workflow is unchanged.
+DATA_DIR = Path("/data") if os.environ.get("RENDER") else APP_DIR
+CONTENT_FILE = DATA_DIR / "content.json"
 SEED_FILE = APP_DIR / "content_seed.json"
 
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "change-me-now")
