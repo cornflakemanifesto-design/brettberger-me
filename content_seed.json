@@ -1,0 +1,51 @@
+{
+  "name": "Brett Berger",
+  "avatar_initials": "BB",
+  "tagline": "My brain hurts. Now it's your problem, too.",
+  "footer_name": "Brett Berger",
+  "links": [
+    {
+      "title": "Unhinged Listings",
+      "sub": "unhingedlistings.com",
+      "href": "https://www.unhingedlistings.com"
+    },
+    {
+      "title": "Hagglebot",
+      "sub": "hagglebot.app",
+      "href": "https://www.hagglebot.app"
+    },
+    {
+      "title": "Behind the Moat",
+      "sub": "YouTube channel",
+      "href": "https://www.youtube.com/@behind_the_moat"
+    },
+    {
+      "title": "Writing",
+      "sub": "A Greyhound bus, narrated as wildlife documentary",
+      "href": "/writing"
+    },
+    {
+      "title": "Email",
+      "sub": "brett@brettberger.me",
+      "href": "mailto:brett@brettberger.me"
+    }
+  ],
+  "colors": {
+    "light": {
+      "bg": "#F7F5F0",
+      "card_bg": "#FFFFFF",
+      "ink": "#1A1815",
+      "ink_soft": "#5A554C",
+      "rule": "#E4E0D6",
+      "accent": "#A0552B"
+    },
+    "dark": {
+      "bg": "#171613",
+      "card_bg": "#201F1B",
+      "ink": "#F2EFE9",
+      "ink_soft": "#B8B2A5",
+      "rule": "#35332C",
+      "accent": "#D98A5A"
+    }
+  }
+}

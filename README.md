@@ -1,23 +1,27 @@
 # brettberger.me
 
-Personal landing page — links to projects, writing, and profiles. Static HTML/CSS, no build step.
+Personal landing page — links to projects, writing, and profiles. FastAPI + Jinja2, content-managed through a password-protected admin page (same pattern as the All Creatures of Pikes Peak site).
 
-## Editing
+## Editing content
 
-Open `index.html`:
-- Replace the `[bracketed placeholders]` with your real tagline and links.
-- Each link is an `<li>` in the `.links` list — copy/paste one to add more, or delete one you don't need.
-- Update the `href="#"` values to real URLs.
+Visit `/admin` on the live site (or `http://localhost:8000/admin` locally) and sign in with the `ADMIN_PASSWORD` env var. From there you can edit:
+- Name, avatar initials, tagline, footer name
+- Every link (title, subtitle, URL) — add or remove rows freely
+- The full color scheme, separately for light and dark mode
 
-Open in a browser directly (double-click `index.html`) to preview changes — no server needed.
+Changes save to `content.json` immediately — no redeploy needed. "Reset to defaults" restores everything from `content_seed.json`.
+
+## Running locally
+
+```
+pip install -r requirements.txt
+ADMIN_PASSWORD=whatever uvicorn main:app --reload
+```
+
+Then open `http://localhost:8000`.
 
 ## Deploying
 
-Recommended: [Vercel](https://vercel.com) or [Netlify](https://netlify.com) — both have a free tier, auto-deploy on git push, and support custom domains.
+Deployed on Render (`render.yaml` included) at the same account as the other projects. `ADMIN_PASSWORD` is set in the Render dashboard's environment variables (not committed). `content.json` lives on a persistent disk so edits survive deploys.
 
-1. Push this folder to a GitHub repo.
-2. Import the repo in Vercel/Netlify (framework preset: "Other" / static site, no build command, output directory: `/`).
-3. In the host's dashboard, add `brettberger.me` as a custom domain.
-4. At your domain registrar (GoDaddy), update the DNS records to the ones the host gives you — typically an `A` record for the root domain and a `CNAME` for `www`.
-
-DNS changes can take a few minutes to a few hours to propagate.
+Custom domain `brettberger.me` points at this Render service — DNS is managed at GoDaddy.

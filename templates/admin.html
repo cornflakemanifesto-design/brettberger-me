@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit — brettberger.me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/styles.css">
+<style>
+  body { align-items: flex-start; padding: 40px 20px 80px; }
+  .admin { width: 100%; max-width: 640px; margin: 0 auto; text-align: left; }
+  .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .admin-header h1 { font-family: var(--serif); font-weight: 500; font-size: 24px; margin: 0; }
+  .admin-header a, .admin-header button { font-family: var(--sans); font-size: 13px; color: var(--ink-soft); background: none; border: none; cursor: pointer; text-decoration: none; }
+  .admin-header a:hover, .admin-header button:hover { color: var(--accent); }
+  section { background: var(--card-bg); border: 1px solid var(--rule); border-radius: 10px; padding: 24px; margin-bottom: 20px; }
+  section h2 { font-family: var(--serif); font-weight: 500; font-size: 16px; margin: 0 0 16px; }
+  label { display: block; font-size: 12px; color: var(--ink-soft); margin: 12px 0 6px; }
+  label:first-child { margin-top: 0; }
+  input[type=text], input[type=url] {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px;
+    font-family: var(--sans); font-size: 14px; background: var(--bg); color: var(--ink); box-sizing: border-box;
+  }
+  input:focus { outline: none; border-color: var(--accent); }
+  .link-row { border: 1px solid var(--rule); border-radius: 8px; padding: 16px; margin-bottom: 12px; position: relative; }
+  .link-row .remove { position: absolute; top: 10px; right: 10px; font-size: 12px; color: var(--ink-soft); background: none; border: none; cursor: pointer; }
+  .link-row .remove:hover { color: var(--accent); }
+  .add-link { background: none; border: 1px dashed var(--rule); border-radius: 8px; padding: 10px; width: 100%; cursor: pointer; font-family: var(--sans); font-size: 13px; color: var(--ink-soft); }
+  .add-link:hover { border-color: var(--accent); color: var(--accent); }
+  .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .color-field { display: flex; align-items: center; gap: 10px; }
+  .color-field label { margin: 0; flex: 1; }
+  .color-field input[type=color] { width: 36px; height: 36px; border: 1px solid var(--rule); border-radius: 6px; padding: 0; background: none; cursor: pointer; }
+  .color-sub { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; margin: 20px 0 10px; }
+  .color-sub:first-child { margin-top: 0; }
+  .save-bar { position: sticky; bottom: 0; display: flex; gap: 10px; padding: 14px 0; background: var(--bg); }
+  .save-bar button { flex: 1; padding: 13px; border: none; border-radius: 8px; font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; }
+  .save-bar .save { background: var(--accent); color: #fff; }
+  .save-bar .reset { background: none; border: 1px solid var(--rule); color: var(--ink-soft); }
+  .status { font-size: 13px; color: var(--ink-soft); margin-left: 4px; }
+</style>
+</head>
+<body>
+<div class="admin">
+  <div class="admin-header">
+    <h1>Edit site</h1>
+    <div style="display:flex; gap:16px; align-items:center;">
+      <a href="/" target="_blank">View site &rarr;</a>
+      <form method="post" action="/admin/logout" style="margin:0;"><button type="submit">Log out</button></form>
+    </div>
+  </div>
+
+  <section>
+    <h2>Header</h2>
+    <label for="name">Name</label>
+    <input type="text" id="name" value="{{ c.name }}">
+    <label for="avatar_initials">Avatar initials</label>
+    <input type="text" id="avatar_initials" maxlength="3" value="{{ c.avatar_initials }}">
+    <label for="tagline">Tagline</label>
+    <input type="text" id="tagline" value="{{ c.tagline }}">
+    <label for="footer_name">Footer name</label>
+    <input type="text" id="footer_name" value="{{ c.footer_name }}">
+  </section>
+
+  <section>
+    <h2>Links</h2>
+    <div id="links"></div>
+    <button type="button" class="add-link" onclick="addLink()">+ Add link</button>
+  </section>
+
+  <section>
+    <h2>Colors</h2>
+    <div class="color-sub">Light mode</div>
+    <div class="color-grid" id="colors-light"></div>
+    <div class="color-sub">Dark mode</div>
+    <div class="color-grid" id="colors-dark"></div>
+  </section>
+
+  <div class="save-bar">
+    <button class="reset" type="button" onclick="resetDefaults()">Reset to defaults</button>
+    <button class="save" type="button" onclick="save()">Save changes</button>
+    <span class="status" id="status"></span>
+  </div>
+</div>
+
+<script>
+const content = {{ c | tojson }};
+
+function linkRowHtml(link, i) {
+  return `
+    <div class="link-row" data-i="${i}">
+      <button type="button" class="remove" onclick="removeLink(${i})">Remove</button>
+      <label>Title</label>
+      <input type="text" class="l-title" value="${escapeAttr(link.title)}">
+      <label>Subtitle</label>
+      <input type="text" class="l-sub" value="${escapeAttr(link.sub)}">
+      <label>URL</label>
+      <input type="text" class="l-href" value="${escapeAttr(link.href)}">
+    </div>`;
+}
+
+function escapeAttr(s) {
+  return (s || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
+function renderLinks() {
+  document.getElementById('links').innerHTML = content.links.map(linkRowHtml).join('');
+}
+
+function addLink() {
+  content.links.push({ title: "New link", sub: "", href: "https://" });
+  renderLinks();
+}
+
+function removeLink(i) {
+  content.links.splice(i, 1);
+  renderLinks();
+}
+
+function colorFieldsHtml(group, values) {
+  const labels = { bg: "Background", card_bg: "Card", ink: "Text", ink_soft: "Soft text", rule: "Border", accent: "Accent" };
+  return Object.keys(labels).map(key => `
+    <div class="color-field">
+      <label>${labels[key]}</label>
+      <input type="color" data-group="${group}" data-key="${key}" value="${values[key]}">
+    </div>`).join('');
+}
+
+function renderColors() {
+  document.getElementById('colors-light').innerHTML = colorFieldsHtml('light', content.colors.light);
+  document.getElementById('colors-dark').innerHTML = colorFieldsHtml('dark', content.colors.dark);
+}
+
+function collect() {
+  content.name = document.getElementById('name').value;
+  content.avatar_initials = document.getElementById('avatar_initials').value;
+  content.tagline = document.getElementById('tagline').value;
+  content.footer_name = document.getElementById('footer_name').value;
+
+  content.links = Array.from(document.querySelectorAll('.link-row')).map(row => ({
+    title: row.querySelector('.l-title').value,
+    sub: row.querySelector('.l-sub').value,
+    href: row.querySelector('.l-href').value,
+  }));
+
+  document.querySelectorAll('input[type=color]').forEach(input => {
+    content.colors[input.dataset.group][input.dataset.key] = input.value;
+  });
+
+  return content;
+}
+
+async function save() {
+  const status = document.getElementById('status');
+  status.textContent = "Saving...";
+  const res = await fetch('/admin/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(collect()),
+  });
+  status.textContent = res.ok ? "Saved." : "Error saving.";
+  setTimeout(() => status.textContent = "", 2000);
+}
+
+function resetDefaults() {
+  if (confirm("Reset all text and colors to the default? This discards unsaved changes.")) {
+    window.location = "/admin/reset";
+  }
+}
+
+renderLinks();
+renderColors();
+</script>
+</body>
+</html>

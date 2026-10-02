@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ c.name }}</title>
+<meta name="description" content="{{ c.name }} — projects, writing, and links.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/styles.css">
+<style>
+  :root {
+    --bg: {{ c.colors.light.bg }};
+    --card-bg: {{ c.colors.light.card_bg }};
+    --ink: {{ c.colors.light.ink }};
+    --ink-soft: {{ c.colors.light.ink_soft }};
+    --rule: {{ c.colors.light.rule }};
+    --accent: {{ c.colors.light.accent }};
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: {{ c.colors.dark.bg }};
+      --card-bg: {{ c.colors.dark.card_bg }};
+      --ink: {{ c.colors.dark.ink }};
+      --ink-soft: {{ c.colors.dark.ink_soft }};
+      --rule: {{ c.colors.dark.rule }};
+      --accent: {{ c.colors.dark.accent }};
+    }
+  }
+</style>
+</head>
+<body>
+
+  <main class="card">
+    <div class="avatar" aria-hidden="true">{{ c.avatar_initials }}</div>
+    <h1>{{ c.name }}</h1>
+    <p class="tagline">{{ c.tagline }}</p>
+
+    <ul class="links">
+      {% for link in c.links %}
+      <li>
+        <a href="{{ link.href }}" class="link-item">
+          <span class="link-title">{{ link.title }}</span>
+          <span class="link-sub">{{ link.sub }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <footer>
+      <span id="year"></span> {{ c.footer_name }}
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
